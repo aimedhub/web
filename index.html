@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YDQ.ORG - Your DQ on internet</title>
+    <link rel="icon" href="https://www.google.com/favicon.ico" type="image/x-icon">
+    <!-- FontAwesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- 全局变量与基础设置 --- */
+        :root {
+            --card-background: rgba(255, 255, 255, 0.75);
+            --card-hover-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #1d1d1f;
+            --text-secondary: #555;
+            --title-color: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-color: rgba(255, 255, 255, 0.6);
+            --accent-color: #4A89F3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-color);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* --- 页面布局容器 --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- 头部区域 --- */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--title-color);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 0;
+            font-weight: 400;
+        }
+
+        /* --- 搜索/查找框区域 --- */
+        .search-section {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+            animation: fadeIn 1s ease-out;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 12px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .search-box:focus-within {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-icon {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            padding: 5px 0;
+        }
+
+        .search-input::placeholder {
+            color: #888;
+        }
+
+        /* --- 内容分类与网格 --- */
+        .category {
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+        
+        /* 依次延迟动画 */
+        .category:nth-child(3) { animation-delay: 0.1s; }
+        .category:nth-child(4) { animation-delay: 0.2s; }
+        .category:nth-child(5) { animation-delay: 0.3s; }
+        .category:nth-child(6) { animation-delay: 0.4s; }
+
+        .category h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--title-color);
+            margin-bottom: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255,255,255,0.4);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .category h2 i {
+            margin-right: 12px;
+            opacity: 0.9;
+        }
+
+        .grid-container {
+            display: grid;
+            /* 响应式核心：最小宽度160px，自适应填充 */
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* --- 卡片设计 --- */
+        .card {
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%; /* 等高卡片 */
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            background: var(--card-hover-bg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: #fff;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card i {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover i {
+            transform: scale(1.1);
+        }
+
+        .card .card-title {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .card .card-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* 限制描述最多3行 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex-grow: 1; /* 让描述撑开空间 */
+        }
+
+        /* --- 无结果提示 --- */
+        #no-results {
+            display: none;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            font-size: 1.2rem;
+            background: rgba(0,0,0,0.1);
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        /* --- 页脚 --- */
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+        }
+        
+        footer a {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /* --- 移动端深度优化 --- */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .search-section {
+                top: 10px; /* 移动端搜索框置顶更紧凑 */
+            }
+
+            .search-box {
+                padding: 10px 15px;
+            }
+
+            .grid-container {
+                /* 手机上更小的最小宽度，允许双列显示 */
+                grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+                gap: 12px;
+            }
+
+            .card {
+                padding: 1.2rem 0.8rem;
+                border-radius: 12px;
+            }
+
+            .card i {
+                font-size: 2rem;
+            }
+
+            .card .card-title {
+                font-size: 0.95rem;
+            }
+
+            .card .card-description {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* 极小屏幕适配 (如 iPhone SE) */
+        @media (max-width: 350px) {
+            .grid-container {
+                grid-template-columns: 1fr; /* 强制单列 */
+            }
+        }
+        
+        /* 动画关键帧 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+
+        <!-- 查找框功能区 -->
+        <section class="search-section">
+            <div class="search-wrapper">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="page-search" class="search-input" placeholder="查找本页资源 (如: PDF, AI, Mac...)" autocomplete="off">
+                </div>
+            </div>
+        </section>
+
+        <!-- 无搜索结果提示 -->
+        <div id="no-results">
+            <i class="far fa-frown-open"></i> 没有找到相关内容
+        </div>
+
+        <section class="category">
+            <h2><i class="fas fa-robot"></i> 人工智能工具</h2>
+            <div class="grid-container">
+                <a href="https://fk.520952.xyz/" target="_blank" class="card">
+                    <i class="fas fa-credit-card" style="color:#555;"></i>
+                    <span class="card-title">便宜的AI购买</span>
+                    <p class="card-description">便宜实惠的AI账号购买渠道，需翻墙。</p>
+                </a>
+                <a href="https://chat.openai.com/" target="_blank" class="card">
+                    <i class="fas fa-robot" style="color:#10a37f;"></i>
+                    <span class="card-title">ChatGPT</span>
+                    <p class="card-description">OpenAI开发的领先的生成式AI。</p>
+                </a>
+                <a href="https://claude.ai/" target="_blank" class="card">
+                    <i class="fas fa-comment-dots" style="color:#D97757;"></i>
+                    <span class="card-title">Claude</span>
+                    <p class="card-description">擅长长文本处理的AI助手。</p>
+                </a>
+                <a href="https://www.deepseek.com/" target="_blank" class="card">
+                    <i class="fas fa-brain" style="color:#4A90E2;"></i>
+                    <span class="card-title">DeepSeek</span>
+                    <p class="card-description">专注于AI搜索和大型语言模型。</p>
+                </a>
+                <a href="https://www.doubao.com/" target="_blank" class="card">
+                    <i class="fas fa-comment-dots" style="color:#00D679;"></i>
+                    <span class="card-title">豆包</span>
+                    <p class="card-description">字节跳动旗下AI，支持写作和问答。</p>
+                </a>
+                <a href="https://gemini.google.com/" target="_blank" class="card">
+                    <i class="fas fa-atom" style="color:#8E44AD;"></i>
+                    <span class="card-title">Gemini</span>
+                    <p class="card-description">谷歌推出的多模态人工智能模型。</p>
+                </a>
+                <a href="https://www.kimi.com/" target="_blank" class="card">
+                    <i class="fas fa-magic" style="color:#B27CF1;"></i>
+                    <span class="card-title">Kimi 智能助手</span>
+                    <p class="card-description">支持超长文本阅读的国产AI助手。</p>
+                </a>
+                <a href="https://www.perplexity.ai/" target="_blank" class="card">
+                    <i class="fas fa-search-plus" style="color:#19B492;"></i>
+                    <span class="card-title">Perplexity AI</span>
+                    <p class="card-description">结合实时搜索的对话式AI，提供来源。</p>
+                </a>
+                <a href="https://poe.com/" target="_blank" class="card">
+                    <i class="fas fa-cubes" style="color:#6E56F1;"></i>
+                    <span class="card-title">Poe</span>
+                    <p class="card-description">集成多种机器人(ChatGPT, Claude)的平台。</p>
+                </a>
+                <a href="https://x.ai/" target="_blank" class="card">
+                    <i class="fas fa-microchip" style="color:#1DA1F2;"></i>
+                    <span class="card-title">xAI (Grok)</span>
+                    <p class="card-description">马斯克旗下的对话式AI Grok。</p>
+                </a>
+                <a href="https://www.facebook.com/" target="_blank" class="card"><i class="fab fa-facebook" style="color: #1877F2;"></i><span class="card-title">Facebook</span><p class="card-description">社交网络服务</p></a>
+                <a href="https://www.google.com/" target="_blank" class="card"><i class="fab fa-google" style="color: #4285F4;"></i><span class="card-title">Google</span><p class="card-description">全球最大的搜索引擎</p></a>
+                <a href="https://www.youtube.com/" target="_blank" class="card"><i class="fab fa-youtube" style="color: #FF0000;"></i><span class="card-title">YouTube</span><p class="card-description">视频分享网站</p></a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2><i class="fas fa-star"></i> 核心工具</h2>
+            <div class="grid-container">
+                <a href="https://www.biorender.com/" target="_blank" class="card">
+                    <i class="fas fa-dna" style="color:#2b8cbe;"></i>
+                    <span class="card-title">BioRender</span>
+                    <p class="card-description">生命科学专业绘图工具。</p>
+                </a>
+                <a href="https://www.chictr.org.cn/" target="_blank" class="card">
+                    <i class="fas fa-hospital-user" style="color:#0D67C2;"></i>
+                    <span class="card-title">ChiCTR</span>
+                    <p class="card-description">中国临床试验注册中心。</p>
+                </a>
+                <a href="https://clinicaltrials.gov/" target="_blank" class="card">
+                    <i class="fas fa-vials" style="color:#005587;"></i>
+                    <span class="card-title">ClinicalTrials</span>
+                    <p class="card-description">全球临床试验注册和结果数据库。</p>
+                </a>
+                <a href="https://www.deepl.com/translator" target="_blank" class="card">
+                    <i class="fas fa-language" style="color:#2b7571;"></i>
+                    <span class="card-title">DeepL 翻译</span>
+                    <p class="card-description">翻译质量精准自然的在线工具。</p>
+                </a>
+                <a href="https://github.com/" target="_blank" class="card">
+                    <i class="fab fa-github" style="color:#181717;"></i>
+                    <span class="card-title">GitHub</span>
+                    <p class="card-description">开发者代码托管和协作平台。</p>
+                </a>
+                <a href="https://accounts.mathpix.com/" target="_blank" class="card">
+                    <i class="fas fa-calculator" style="color:#4285F4;"></i>
+                    <span class="card-title">公式识别工具</span>
+                    <p class="card-description">图片公式转LaTeX代码神器。</p>
+                </a>
+                <a href="https://www.google.com/" target="_blank" class="card">
+                    <i class="fab fa-google" style="color:#4285F4;"></i>
+                    <span class="card-title">Google 搜索</span>
+                    <p class="card-description">全球最大的搜索引擎。</p>
+                </a>
+                <a href="https://scholar.google.com/" target="_blank" class="card">
+                    <i class="fas fa-graduation-cap" style="color:#4285F4;"></i>
+                    <span class="card-title">谷歌学术</span>
+                    <p class="card-description">免费的学术文献检索引擎。</p>
+                </a>
+                <a href="https://lookup.icann.org/" target="_blank" class="card">
+                    <i class="fas fa-globe-americas" style="color:#007BFF;"></i>
+                    <span class="card-title">ICANN Lookup</span>
+                    <p class="card-description">域名WHOIS注册详情查询。</p>
+                </a>
+                <a href="https://ipdata.co/" target="_blank" class="card">
+                    <i class="fas fa-network-wired" style="color:#6f42c1;"></i>
+                    <span class="card-title">IP 数据查询</span>
+                    <p class="card-description">IP地址地理位置和详细信息查询。</p>
+                </a>
+                <a href="https://github.com/zbezj/HEU_KMS_Activator/releases" target="_blank" class="card">
+                    <i class="fas fa-key" style="color:#78909C;"></i>
+                    <span class="card-title">KMS 激活工具</span>
+                    <p class="card-description">Windows和Office激活工具下载。</p>
+                </a>
+                <a href="https://www.nccn.org/" target="_blank" class="card">
+                    <i class="fas fa-ribbon" style="color:#0033A0;"></i>
+                    <span class="card-title">NCCN 指南</span>
+                    <p class="card-description">肿瘤临床实践指南金标准。</p>
+                </a>
+                <a href="https://smallpdf.com/cn/unlock-pdf" target="_blank" class="card">
+                    <i class="fas fa-unlock-alt" style="color:#F05252;"></i>
+                    <span class="card-title">PDF破解</span>
+                    <p class="card-description">在线移除PDF文件密码和限制。</p>
+                </a>
+                <a href="https://www.ilovepdf.com/zh-cn" target="_blank" class="card">
+                    <i class="fas fa-file-pdf" style="color:#E53333;"></i>
+                    <span class="card-title">PDF工具箱</span>
+                    <p class="card-description">压缩、转换、合并PDF的一站式工具。</p>
+                </a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" class="card">
+                    <i class="fas fa-database" style="color:#324a87;"></i>
+                    <span class="card-title">PubMed</span>
+                    <p class="card-description">权威的生物医学文献数据库。</p>
+                </a>
+                <a href="https://www.sci-hub.pub/" target="_blank" class="card">
+                    <i class="fas fa-key" style="color:#fada5e;"></i>
+                    <span class="card-title">Sci-Hub</span>
+                    <p class="card-description">强大的文献全文免费获取工具。</p>
+                </a>
+                <a href="https://texpeed.cn/" target="_blank" class="card">
+                    <i class="fas fa-pen-alt" style="color:#1E90FF;"></i>
+                    <span class="card-title">TeXpeed</span>
+                    <p class="card-description">微信公众号内容排版编辑器。</p>
+                </a>
+                <a href="https://web.archive.org/" target="_blank" class="card">
+                    <i class="fas fa-history" style="color:#666666;"></i>
+                    <span class="card-title">Wayback Machine</span>
+                    <p class="card-description">网页时光机，查看网站历史版本。</p>
+                </a>
+                <a href="https://uutool.cn/word-xhs/" target="_blank" class="card">
+                    <i class="fas fa-pencil-ruler" style="color:#e67e22;"></i>
+                    <span class="card-title">小红书格式</span>
+                    <p class="card-description">文本转小红书笔记格式，加Emoji。</p>
+                </a>
+                <a href="https://y2down.cc/" target="_blank" class="card">
+                    <i class="fas fa-download" style="color:#FF0000;"></i>
+                    <span class="card-title">YouTube下载</span>
+                    <p class="card-description">在线下载YouTube视频和音频。</p>
+                </a>
+                <a href="https://www.youtube.com/" target="_blank" class="card">
+                    <i class="fab fa-youtube" style="color:#FF0000;"></i>
+                    <span class="card-title">YouTube</span>
+                    <p class="card-description">全球最大的视频学习与娱乐平台。</p>
+                </a>
+                <a href="https://z-lib.blog/" target="_blank" class="card">
+                    <i class="fas fa-book-reader" style="color:#337ab7;"></i>
+                    <span class="card-title">Z-Library</span>
+                    <p class="card-description">海量电子书免费下载图书馆。</p>
+                </a>
+                <a href="https://www.nmpa.gov.cn/" target="_blank" class="card">
+                    <i class="fas fa-landmark" style="color:#C93718;"></i>
+                    <span class="card-title">国家药监局</span>
+                    <p class="card-description">NMPA官网，查询药品器械注册信息。</p>
+                </a>
+                <a href="https://c.wanfangdata.com.cn/periodical" target="_blank" class="card">
+                    <i class="fas fa-journal-whills" style="color:#1a71b3;"></i>
+                    <span class="card-title">万方期刊</span>
+                    <p class="card-description">中文学术期刊论文检索平台。</p>
+                </a>
+                <a href="https://drugs.dxy.cn/" target="_blank" class="card">
+                    <i class="fas fa-pills" style="color:#7C5CDE;"></i>
+                    <span class="card-title">用药助手</span>
+                    <p class="card-description">丁香园药品查询和临床决策支持。</p>
+                </a>
+                <a href="https://navi.cnki.net/knavi/" target="_blank" class="card">
+                    <i class="fas fa-book" style="color:#3e863d;"></i>
+                    <span class="card-title">知网期刊</span>
+                    <p class="card-description">CNKI学术资源总库导航。</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2><i class="fab fa-apple"></i> Mac软件下载</h2>
+            <div class="grid-container">
+                <a href="https://z5a.com/html/Mac/AcrobatPDF.html" target="_blank" class="card">
+                    <i class="fas fa-file-pdf" style="color:#FF0000;"></i>
+                    <span class="card-title">Acrobat PDF</span>
+                    <p class="card-description">PDF阅读编辑管理 (Mac版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/Bandizip.html" target="_blank" class="card">
+                    <i class="fas fa-file-archive" style="color:#007ACC;"></i>
+                    <span class="card-title">Bandizip</span>
+                    <p class="card-description">强大的多功能解压缩 (Mac版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/CleanShot.html" target="_blank" class="card">
+                    <i class="fas fa-camera-retro" style="color:#5D5FEF;"></i>
+                    <span class="card-title">CleanShot X</span>
+                    <p class="card-description">强大的截图、录屏和标注工具。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/EasyFind.html" target="_blank" class="card">
+                    <i class="fas fa-search-plus" style="color:#FF9800;"></i>
+                    <span class="card-title">EasyFind</span>
+                    <p class="card-description">Mac文件深度搜索工具。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/Endnote.html" target="_blank" class="card">
+                    <i class="fas fa-file-import" style="color:#F4A261;"></i>
+                    <span class="card-title">Endnote</span>
+                    <p class="card-description">经典文献管理软件 (Mac版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/IINA.html" target="_blank" class="card">
+                    <i class="fas fa-play-circle" style="color:#6236ff;"></i>
+                    <span class="card-title">IINA</span>
+                    <p class="card-description">现代风格的Mac全能视频播放器。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/Office2024.html" target="_blank" class="card">
+                    <i class="fas fa-file-word" style="color:#D83B01;"></i>
+                    <span class="card-title">Office 2024</span>
+                    <p class="card-description">微软办公套件最新版 (Mac版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/Paste.html" target="_blank" class="card">
+                    <i class="fas fa-paste" style="color:#4A90E2;"></i>
+                    <span class="card-title">Paste</span>
+                    <p class="card-description">高颜值的剪贴板历史管理工具。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/Prism9.html" target="_blank" class="card">
+                    <i class="fas fa-chart-bar" style="color:#005587;"></i>
+                    <span class="card-title">Prism 9</span>
+                    <p class="card-description">生物统计与绘图软件 (Mac版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/SPSS.html" target="_blank" class="card">
+                    <i class="fas fa-chart-pie" style="color:#C12127;"></i>
+                    <span class="card-title">SPSS</span>
+                    <p class="card-description">专业统计分析软件 (Mac版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Mac/V2rayU.html" target="_blank" class="card">
+                    <i class="fas fa-paper-plane" style="color:#327798;"></i>
+                    <span class="card-title">V2RayU</span>
+                    <p class="card-description">Mac常用VPN/代理客户端。</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="category">
+            <h2><i class="fab fa-windows"></i> Windows软件下载</h2>
+            <div class="grid-container">
+                <a href="https://z5a.com/html/Windows/AdobePDF.html" target="_blank" class="card">
+                    <i class="fas fa-file-pdf" style="color:#FF0000;"></i>
+                    <span class="card-title">Acrobat PDF</span>
+                    <p class="card-description">PDF阅读编辑管理 (Win版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Windows/EndNoteX9.html" target="_blank" class="card">
+                    <i class="fas fa-file-import" style="color:#F4A261;"></i>
+                    <span class="card-title">EndNote X9</span>
+                    <p class="card-description">经典文献管理软件 (Win版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Windows/GraphPadPrism.html" target="_blank" class="card">
+                    <i class="fas fa-chart-bar" style="color:#005587;"></i>
+                    <span class="card-title">GraphPad Prism</span>
+                    <p class="card-description">统计绘图软件 (Win版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Windows/PASS.html" target="_blank" class="card">
+                    <i class="fas fa-calculator" style="color:#003366;"></i>
+                    <span class="card-title">PASS</span>
+                    <p class="card-description">样本量和功效计算软件 (Win版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Windows/SPSS.html" target="_blank" class="card">
+                    <i class="fas fa-chart-pie" style="color:#C12127;"></i>
+                    <span class="card-title">SPSS</span>
+                    <p class="card-description">专业统计分析软件 (Win版)。</p>
+                </a>
+                <a href="https://z5a.com/html/Windows/v2rayN.html" target="_blank" class="card">
+                    <i class="fas fa-paper-plane" style="color:#327798;"></i>
+                    <span class="card-title">V2rayN</span>
+                    <p class="card-description">Windows主流代理客户端。</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>© 2025 ydq.org - Your DQ on internet. email:aimedhub001@gmail.com </p>
+    </footer>
+
+    <!-- 页内搜索与自动排序逻辑脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- 1. 自动排序功能 ---
+            const categories = document.querySelectorAll('.category');
+            categories.forEach(category => {
+                const grid = category.querySelector('.grid-container');
+                if (!grid) return;
+
+                // 获取所有卡片
+                const cards = Array.from(grid.querySelectorAll('.card'));
+                
+                // 对卡片进行排序
+                cards.sort((a, b) => {
+                    const titleA = a.querySelector('.card-title').textContent.trim();
+                    const titleB = b.querySelector('.card-title').textContent.trim();
+                    // 使用 zh-CN 进行本地化比较，支持中文拼音排序和英文排序
+                    return titleA.localeCompare(titleB, 'zh-CN');
+                });
+
+                // 将排序后的卡片重新添加到容器中（DOM 操作会移动元素，而非复制）
+                cards.forEach(card => grid.appendChild(card));
+            });
+
+            // --- 2. 页内搜索逻辑 ---
+            const searchInput = document.getElementById('page-search');
+            const cards = document.querySelectorAll('.card');
+            const noResults = document.getElementById('no-results');
+
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                let hasGlobalMatch = false;
+
+                // 遍历所有卡片，匹配显示/隐藏
+                cards.forEach(card => {
+                    const title = card.querySelector('.card-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.card-description').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || desc.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                        hasGlobalMatch = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // 遍历所有分类，如果分类下全是隐藏的卡片，则隐藏整个分类
+                categories.forEach(category => {
+                    let visibleCount = 0;
+                    const catCards = category.querySelectorAll('.card');
+                    catCards.forEach(c => {
+                        if (c.style.display !== 'none') visibleCount++;
+                    });
+
+                    if (visibleCount > 0) {
+                        category.style.display = 'block';
+                    } else {
+                        category.style.display = 'none';
+                    }
+                });
+
+                // 处理"无结果"提示
+                if (!hasGlobalMatch && searchTerm !== "") {
+                    noResults.style.display = 'block';
+                } else {
+                    noResults.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
